@@ -1,0 +1,27 @@
+version: '3'
+volumes:
+    db-data:
+
+services:
+    web:
+        build: . # current directoryのDockerfileからビルドする
+        ports:
+            - '3000:3000' # -p runするときのpublish port number
+        volumes:
+            - '.:/product-register' # -v アプリをmountする場所
+        environment:
+            - 'POSTGRES_PASSWORD=postgres'
+        tty: true # -t 仮想環境へのアクセスを開く
+        stdin_open: true # -i 仮想環境のアクセス結果を表示
+        depends_on:
+            - db
+        links:
+            - db
+
+    db:
+        image: postgres
+        volumes:
+            - 'db-data:/var/lib/postgresql/data'
+        environment:
+            - 'POSTGRES_USER=postgres'
+            - 'POSTGRES_PASSWORD=postgres'
